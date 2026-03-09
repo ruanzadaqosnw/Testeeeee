@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          rm -rf node_modules package-lock.json
+          rm -rf node_modules package-lock.json ios android
           npm install
 
       - name: Setup Expo
@@ -29,7 +29,12 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Prebuild iOS
-        run: npx expo prebuild --platform ios --no-install
+        run: npx expo prebuild --platform ios --no-install --non-interactive
+
+      - name: Install Pods
+        run: |
+          cd ios
+          pod install
 
       - name: Build iOS App (ARM64 Unsigned)
         run: |
