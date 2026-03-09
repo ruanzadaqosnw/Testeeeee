@@ -27,10 +27,13 @@ jobs:
           expo-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
+      - name: Prebuild iOS
+        run: npx expo prebuild --platform ios --no-install
+
       - name: Build iOS App (ARM64 Unsigned)
         run: |
-          npx expo prebuild --platform ios
-          xcodebuild -workspace ios/yujingzong.xcworkspace \
+          cd ios
+          xcodebuild -workspace yujingzong.xcworkspace \
             -scheme yujingzong \
             -configuration Release \
             -sdk iphoneos \
@@ -40,12 +43,13 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGN_ENTITLEMENTS="" \
             GCC_PREPROCESSOR_DEFINITIONS='$GCC_PREPROCESSOR_DEFINITIONS SKIP_CODE_SIGNING=1' \
-            clean build
+            clean build \
+            -derivedDataPath ../build
 
       - name: Package IPA
         run: |
           mkdir -p build/Payload
-          cp -r build/Release-iphoneos/yujingzong.app build/Payload/
+          cp -r build/Build/Products/Release-iphoneos/yujingzong.app build/Payload/
           cd build
           zip -r YujingZong-Unsigned.ipa Payload
           cd ..
