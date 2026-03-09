@@ -1,0 +1,60 @@
+name: Build iOS Unsigned IPA (ARM64)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build iOS App (ARM64 Unsigned)
+        run: |
+          npx expo prebuild --platform ios
+          xcodebuild -workspace ios/yujingzong.xcworkspace \
+            -scheme yujingzong \
+            -configuration Release \
+            -sdk iphoneos \
+            -arch arm64 \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_ENTITLEMENTS="" \
+            GCC_PREPROCESSOR_DEFINITIONS='$GCC_PREPROCESSOR_DEFINITIONS SKIP_CODE_SIGNING=1' \
+            clean build
+
+      - name: Package IPA
+        run: |
+          mkdir -p build/Payload
+          cp -r build/Release-iphoneos/yujingzong.app build/Payload/
+          cd build
+          zip -r YujingZong-Unsigned.ipa Payload
+          cd ..
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: YujingZong-Unsigned-IPA
+          path: build/YujingZong-Unsigned.ipa

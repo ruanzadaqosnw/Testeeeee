@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Yujing Zong",
+    "slug": "yujing-zong",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.orange1270.yellow5362",
+      "buildNumber": "1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "app.orange1270.yellow5362"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
